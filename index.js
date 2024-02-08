@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 
 // Data
-const persons = [
+let persons = [
   {
     id: 1,
     name: "Arto Hellas",
@@ -37,18 +37,25 @@ app.route("/info").get((_req, res) => {
   );
 });
 app.route("/api/persons").get((_req, res) => res.json(persons));
-app.route("/api/persons/:id").get((req, res) => {
-  const id = Number(req.params.id);
-  const person = persons.find((p) => p.id === id);
+app
+  .route("/api/persons/:id")
+  .get((req, res) => {
+    const id = Number(req.params.id);
+    const person = persons.find((p) => p.id === id);
 
-  // If person is not found
-  // we return not found
-  if (!person) {
-    return res.status(404).end();
-  }
+    // If person is not found
+    // we return not found
+    if (!person) {
+      return res.status(404).end();
+    }
 
-  return res.json(person);
-});
+    return res.json(person);
+  })
+  .delete((req, res) => {
+    const id = Number(req.params.id);
+    persons = persons.filter((p) => p.id !== id);
+    return res.status(204).end();
+  });
 
 // Start server
 const PORT = 3001;
