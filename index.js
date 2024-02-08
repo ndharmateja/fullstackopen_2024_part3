@@ -30,7 +30,13 @@ const persons = [
 ];
 
 // Routes
-app.route("/api/persons").get((req, res) => res.json(persons));
+app.route("/info").get((_req, res) => {
+  const dateString = new Date().toString();
+  return res.send(
+    `<p>Phonebook has info for ${persons.length} people</p><p>${dateString}</p>`
+  );
+});
+app.route("/api/persons").get((_req, res) => res.json(persons));
 
 // Start server
 const PORT = 3001;
