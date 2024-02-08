@@ -37,6 +37,18 @@ app.route("/info").get((_req, res) => {
   );
 });
 app.route("/api/persons").get((_req, res) => res.json(persons));
+app.route("/api/persons/:id").get((req, res) => {
+  const id = Number(req.params.id);
+  const person = persons.find((p) => p.id === id);
+
+  // If person is not found
+  // we return not found
+  if (!person) {
+    return res.status(404).end();
+  }
+
+  return res.json(person);
+});
 
 // Start server
 const PORT = 3001;
