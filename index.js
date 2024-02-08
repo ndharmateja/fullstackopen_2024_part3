@@ -39,21 +39,25 @@ app.route("/info").get((_req, res) => {
     `<p>Phonebook has info for ${persons.length} people</p><p>${dateString}</p>`
   );
 });
+
 app
   .route("/api/persons")
   .get((_req, res) => res.json(persons))
   .post((req, res) => {
-    const body = req.body;
+    const { name, number } = req.body;
 
-    const person = {
-      name: body.name,
-      number: body.number,
-      id: generateId(),
-    };
+    if (!name) return res.status(400).json({ error: "name missing" });
+    if (!number) return res.status(400).json({ error: "number missing" });
+
+    if (persons.map((p) => p.name.toLowerCase()).includes(name.toLowerCase()))
+      return res.status(400).json({ error: "name must be unique" });
+
+    const person = { name, number, id: generateId() };
 
     persons = persons.concat(person);
     return res.json(person);
   });
+
 app
   .route("/api/persons/:id")
   .get((req, res) => {
