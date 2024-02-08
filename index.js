@@ -29,6 +29,9 @@ let persons = [
   },
 ];
 
+// Functions
+const generateId = () => Math.floor(Math.random() * 10000000);
+
 // Routes
 app.route("/info").get((_req, res) => {
   const dateString = new Date().toString();
@@ -36,7 +39,21 @@ app.route("/info").get((_req, res) => {
     `<p>Phonebook has info for ${persons.length} people</p><p>${dateString}</p>`
   );
 });
-app.route("/api/persons").get((_req, res) => res.json(persons));
+app
+  .route("/api/persons")
+  .get((_req, res) => res.json(persons))
+  .post((req, res) => {
+    const body = req.body;
+
+    const person = {
+      name: body.name,
+      number: body.number,
+      id: generateId(),
+    };
+
+    persons = persons.concat(person);
+    return res.json(person);
+  });
 app
   .route("/api/persons/:id")
   .get((req, res) => {
