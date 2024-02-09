@@ -1,13 +1,35 @@
-GET http://localhost:3001/api/persons
+@dev_url=http://localhost:3001
+@prod_url=https://phonebook-backend-qw61.onrender.com
 
 ###
-GET http://localhost:3001/api/persons/4
+GET {{dev_url}}/api/persons
 
 ###
-DELETE http://localhost:3001/api/persons/3
+GET {{dev_url}}/api/persons/4
 
 ###
-POST http://localhost:3001/api/persons
+DELETE {{dev_url}}/api/persons/3
+
+###
+POST {{dev_url}}/api/persons
+Content-Type: application/json
+
+{
+    "name": "dharma",
+    "number": "040-27650909"
+}
+
+###
+GET {{prod_url}}/api/persons
+
+###
+GET {{prod_url}}/api/persons/4
+
+###
+DELETE {{prod_url}}/api/persons/3
+
+###
+POST {{prod_url}}/api/persons
 Content-Type: application/json
 
 {
