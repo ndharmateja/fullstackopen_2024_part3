@@ -7,20 +7,24 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-
-    // Build UI steps:
-    // 1. Delete dist folder
-    // 2. cd into frontend
-    // 3. build the frontend app
-    // 4. copy the dist folder into backend 
     "build:ui": "rm -rf dist && cd ../fullstackopen_2024/part2/phonebook && npm run build && cp -r dist ../../../fullstackopen_2024_part3",
-
-    // Full deploy steps:
-    // 1. Build UI
-    // 2. Stage all changes
-    // 3. Make a commit with message "uibuild"
-    // 4. Push to GitHub which will trigger an auto-deploy on Render
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push origin master"
+  },
+  "scriptsComments": {
+    "build:ui": [
+      "Build UI steps:",
+      "1. Delete dist folder",
+      "2. cd into frontend",
+      "3. build the frontend app",
+      "4. copy the dist folder into backend "
+    ],
+    "deploy:full": [
+      "Full deploy steps:",
+      "1. Build UI",
+      "2. Stage all changes",
+      "3. Make a commit with message 'uibuild'",
+      "4. Push to GitHub which will trigger an auto-deploy on Render"
+    ]
   },
   "author": "",
   "license": "ISC",
