@@ -49,9 +49,6 @@ let persons = [
   },
 ];
 
-// Functions
-const generateId = () => Math.floor(Math.random() * 10000000);
-
 // Routes
 app.route("/info").get((_req, res) => {
   const dateString = new Date().toString();
@@ -71,13 +68,8 @@ app
     if (!name) return res.status(400).json({ error: "name missing" });
     if (!number) return res.status(400).json({ error: "number missing" });
 
-    if (persons.map((p) => p.name.toLowerCase()).includes(name.toLowerCase()))
-      return res.status(400).json({ error: "name must be unique" });
-
-    const person = { name, number, id: generateId() };
-
-    persons = persons.concat(person);
-    return res.json(person);
+    const newPerson = new Person({ name, number });
+    newPerson.save().then((p) => res.json(p));
   });
 
 app
