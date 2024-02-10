@@ -27,14 +27,14 @@ app
   .get((_req, res) => {
     Person.find({}).then((persons) => res.json(persons));
   })
-  .post((req, res) => {
+  .post((req, res, next) => {
     const { name, number } = req.body;
 
-    if (!name) return res.status(400).json({ error: "name missing" });
-    if (!number) return res.status(400).json({ error: "number missing" });
-
     const newPerson = new Person({ name, number });
-    newPerson.save().then((p) => res.json(p));
+    newPerson
+      .save()
+      .then((p) => res.json(p))
+      .catch((e) => next(e));
   });
 
 app
@@ -51,11 +51,12 @@ app
   })
   .put((req, res, next) => {
     const { name, number } = req.body;
-
-    if (!name) return res.status(400).json({ error: "name missing" });
-    if (!number) return res.status(400).json({ error: "number missing" });
-
-    Person.findByIdAndUpdate(req.params.id, { name, number }, { new: true })
+    console.log("number:", number);
+    Person.findByIdAndUpdate(
+      req.params.id,
+      { name, number },
+      { new: true, runValidators: true, context: "query" }
+    )
       .then((p) => (p ? res.json(p) : res.status(404).end()))
       .catch((e) => next(e));
   });
