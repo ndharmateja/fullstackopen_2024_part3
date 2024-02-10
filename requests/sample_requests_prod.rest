@@ -1,0 +1,19 @@
+@prod_url=https://phonebook-backend-qw61.onrender.com
+
+###
+GET {{prod_url}}/api/persons
+
+###
+GET {{prod_url}}/api/persons/4
+
+###
+DELETE {{prod_url}}/api/persons/3
+
+###
+POST {{prod_url}}/api/persons
+Content-Type: application/json
+
+{
+    "name": "dharma",
+    "number": "040-27650909"
+}
