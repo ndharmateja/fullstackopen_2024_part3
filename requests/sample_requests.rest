@@ -5,10 +5,19 @@
 GET {{dev_url}}/api/persons
 
 ###
-GET {{dev_url}}/api/persons/4
+GET {{dev_url}}/api/persons/62780285c0523751faec9953
 
 ###
-DELETE {{dev_url}}/api/persons/3
+DELETE {{dev_url}}/api/persons/62780285c0523751faec9953
+
+###
+PUT {{dev_url}}/api/persons/65c72840ca7b11732e8576de
+Content-Type: application/json
+
+{
+    "name": "Dharma",
+    "number": "+91-8790055448"
+}
 
 ###
 POST {{dev_url}}/api/persons

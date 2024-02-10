@@ -1,8 +1,8 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const morgan = require("morgan");
 const Person = require("./models/Person");
+const mw = require("./middleware");
 
 const app = express();
 
@@ -10,51 +10,16 @@ const app = express();
 app.use(express.static("dist"));
 app.use(express.json());
 app.use(cors());
-app.use(
-  morgan((tokens, req, res) => {
-    return [
-      tokens.method(req, res),
-      tokens.url(req, res),
-      tokens.status(req, res),
-      tokens.res(req, res, "content-length"),
-      "-",
-      tokens["response-time"](req, res),
-      "ms",
-      JSON.stringify(req.body),
-    ].join(" ");
-  })
-);
-
-// Data
-let persons = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
+app.use(mw.requestLogger);
 
 // Routes
 app.route("/info").get((_req, res) => {
-  const dateString = new Date().toString();
-  return res.send(
-    `<p>Phonebook has info for ${persons.length} people</p><p>${dateString}</p>`
-  );
+  Person.countDocuments({}).then((count) => {
+    const dateString = new Date().toString();
+    return res.send(
+      `<p>Phonebook has info for ${count} people</p><p>${dateString}</p>`
+    );
+  });
 });
 
 app
@@ -74,23 +39,32 @@ app
 
 app
   .route("/api/persons/:id")
-  .get((req, res) => {
-    const id = Number(req.params.id);
-    const person = persons.find((p) => p.id === id);
-
-    // If person is not found
-    // we return not found
-    if (!person) {
-      return res.status(404).end();
-    }
-
-    return res.json(person);
+  .get((req, res, next) => {
+    Person.findById(req.params.id)
+      .then((p) => (p ? res.json(p) : res.status(404).end()))
+      .catch((e) => next(e));
   })
-  .delete((req, res) => {
-    const id = Number(req.params.id);
-    persons = persons.filter((p) => p.id !== id);
-    return res.status(204).end();
+  .delete((req, res, next) => {
+    Person.findByIdAndDelete(req.params.id)
+      .then(() => res.status(204).end())
+      .catch((e) => next(e));
+  })
+  .put((req, res, next) => {
+    const { name, number } = req.body;
+
+    if (!name) return res.status(400).json({ error: "name missing" });
+    if (!number) return res.status(400).json({ error: "number missing" });
+
+    Person.findByIdAndUpdate(req.params.id, { name, number }, { new: true })
+      .then((p) => (p ? res.json(p) : res.status(404).end()))
+      .catch((e) => next(e));
   });
+
+//Unknown route
+app.use(mw.notFoundRoute);
+
+// Error handler
+app.use(mw.errorHandler);
 
 // Start server
 const PORT = process.env.PORT || 3001;
