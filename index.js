@@ -1,6 +1,8 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
+const Person = require("./models/Person");
 
 const app = express();
 
@@ -60,7 +62,9 @@ app.route("/info").get((_req, res) => {
 
 app
   .route("/api/persons")
-  .get((_req, res) => res.json(persons))
+  .get((_req, res) => {
+    Person.find({}).then((persons) => res.json(persons));
+  })
   .post((req, res) => {
     const { name, number } = req.body;
 
